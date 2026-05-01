@@ -7,14 +7,47 @@ export const useWorkspaceStore = defineStore('workspace', () => {
   const currentWorkspace = ref<Workspace | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
+  const booting = ref<boolean>(false)
 
   const hasWorkspace = computed(() => currentWorkspace.value !== null)
+
+  async function setCurrentWorkspace(workspace: Workspace) {
+    const colelctionStore = useCollectionStore()
+    currentWorkspace.value = workspace
+
+    await saveLastWorkspacePath(workspace.path)
+    await colelctionStore.load(workspace.path)
+  }
+
+  async function boot() {
+    booting.value = true
+    error.value = null
+    try {
+      const config = await getAppConfig()
+
+      if (!config.last_workspace_path)
+        return
+
+      const workspace = await openWorkspace(config.last_workspace_path)
+      await setCurrentWorkspace(workspace)
+    }
+    catch {
+      currentWorkspace.value = null
+      await clearLastWorkspacePath()
+      error.value = 'O último workspace não pôde ser aberto'
+    }
+    finally {
+      booting.value = false
+    }
+  }
 
   async function create(path: string, name: string) {
     loading.value = true
     error.value = null
+
     try {
-      currentWorkspace.value = await createWorkspace(path, name)
+      const workspace = await createWorkspace(path, name)
+      await setCurrentWorkspace(workspace)
     }
     catch (err) {
       error.value = String(err)
@@ -29,7 +62,8 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     error.value = null
 
     try {
-      currentWorkspace.value = await openWorkspace(path)
+      const workspace = await openWorkspace(path)
+      await setCurrentWorkspace(workspace)
     }
     catch (err) {
       error.value = String(err)
@@ -39,12 +73,19 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     }
   }
 
-  function close() {
+  async function close() {
+    const colelctionStore = useCollectionStore()
+
     currentWorkspace.value = null
     error.value = null
+
+    colelctionStore.clear()
+
+    await clearLastWorkspacePath()
   }
 
   return {
+    boot,
     currentWorkspace,
     loading,
     error,
@@ -52,5 +93,6 @@ export const useWorkspaceStore = defineStore('workspace', () => {
     create,
     open,
     close,
+    booting,
   }
 })

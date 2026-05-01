@@ -18,7 +18,7 @@ export interface CreateWorkspaceResult {
 
 export async function createWorkspace(basePath: string, name: string) {
   if (!basePath || Array.isArray(basePath)) {
-    return null
+    throw new Error('Diretório inválido')
   }
 
   return invoke<CreateWorkspaceResult>('create_workspace', {

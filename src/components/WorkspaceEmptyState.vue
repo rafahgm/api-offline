@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-const modalCreateWorkspace = useCreateWorkspace()
+const modalCreateWorkspace = useCreateWorkspaceModal()
 
 const { create, open } = useWorkspaceStore()
 

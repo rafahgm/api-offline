@@ -1,7 +1,7 @@
 import type { CreateWorkspaceModalProps, CreateWorkspaceModalResult } from '../components/CreateWorkspaceModal.vue'
 import CreateWorkspaceModal from '../components/CreateWorkspaceModal.vue'
 
-export function useCreateWorkspace() {
+export function useCreateWorkspaceModal() {
   const overlay = useOverlay()
 
   return (options: CreateWorkspaceModalProps): Promise<CreateWorkspaceModalResult> => {

@@ -17,17 +17,18 @@ pub struct CreateWorkspaceResult {
 
 #[tauri::command]
 pub fn create_workspace(base_path: String, name: String) -> Result<CreateWorkspaceResult, String> {
-    let workspace_path = PathBuf::from(base_path).join(".api-studio");
+    let workspace_path = PathBuf::from(base_path);
+    let meta_path: PathBuf = workspace_path.join(".api-studio");
 
-    if workspace_path.exists() {
+    if meta_path.exists() {
         return Err("Já existe um workspace nesse diretório".into());
     }
 
-    fs::create_dir_all(&workspace_path).map_err(|e| e.to_string())?;
-    fs::create_dir_all(workspace_path.join("environments")).map_err(|e| e.to_string())?;
-    fs::create_dir_all(workspace_path.join("collections")).map_err(|e| e.to_string())?;
-    fs::create_dir_all(workspace_path.join("requests")).map_err(|e| e.to_string())?;
-    fs::create_dir_all(workspace_path.join("history")).map_err(|e| e.to_string())?;
+    fs::create_dir_all(&meta_path).map_err(|e| e.to_string())?;
+    fs::create_dir_all(meta_path.join("environments")).map_err(|e| e.to_string())?;
+    fs::create_dir_all(meta_path.join("collections")).map_err(|e| e.to_string())?;
+    fs::create_dir_all(meta_path.join("requests")).map_err(|e| e.to_string())?;
+    fs::create_dir_all(meta_path.join("history")).map_err(|e| e.to_string())?;
 
     let manifest = WorkspaceManifest {
         name,
@@ -37,9 +38,9 @@ pub fn create_workspace(base_path: String, name: String) -> Result<CreateWorkspa
 
     let manifest_json = serde_json::to_string_pretty(&manifest).map_err(|e| e.to_string())?;
 
-    fs::write(workspace_path.join("workspace.json"), manifest_json).map_err(|e| e.to_string())?;
+    fs::write(meta_path.join("workspace.json"), manifest_json).map_err(|e| e.to_string())?;
     fs::write(
-        workspace_path.join("collections").join("default.json"),
+        meta_path.join("collections").join("default.json"),
         serde_json::json!({
             "id": "default",
             "name": "Default",
@@ -57,13 +58,13 @@ pub fn create_workspace(base_path: String, name: String) -> Result<CreateWorkspa
 
 #[tauri::command]
 pub fn open_workspace(workspace_path: String) -> Result<CreateWorkspaceResult, String> {
-    let path = PathBuf::from(&workspace_path).join(".api-studio");
+    let path = PathBuf::from(&workspace_path);
 
     if !path.exists() {
         return Err("A pasta selecionada não existe".into());
     }
 
-    let manifest_path = path.join("workspace.json");
+    let manifest_path = path.join(".api-studio").join("workspace.json");
 
     if !manifest_path.exists() {
         return Err("Esta pasta não contém um workspace válido".into());
