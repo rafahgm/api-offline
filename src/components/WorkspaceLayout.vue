@@ -64,7 +64,7 @@
 
     <UDashboardPanel :ui="{ root: 'pt-12' }">
       <template #body>
-        <RequestPanel />
+        <RequestEditor />
       </template>
     </UDashboardPanel>
   </UDashboardGroup>

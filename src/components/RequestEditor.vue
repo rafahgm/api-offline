@@ -1,48 +1,58 @@
 <template>
-  <div class="space-y-4">
-    <div class="flex gap-2">
-      <USelect
-        model-value="GET"
-        :items="['GET', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE']"
-        class="w-32"
-      />
-
+  <div class="flex h-full flex-col">
+    <div class="border-b border-default p-3">
       <UInput
-        model-value=""
-        placeholder="https://api.example.com/users"
-        class="flex-1"
-      />
-
-      <UButton
-        label="Send"
-        icon="i-lucide-send"
+        v-model="request.name"
+        placeholder="Request name"
+        class="max-w-md"
       />
     </div>
 
-    <UTabs
-      :items="[
-        { label: 'Params', slot: 'params' },
-        { label: 'Headers', slot: 'headers' },
-        { label: 'Body', slot: 'body' },
-      ]"
-    >
-      <template #params>
-        <div class="p-4 text-sm text-muted">
-          Query params serão configurados aqui.
-        </div>
-      </template>
+    <RequestUrlBar />
 
-      <template #headers>
-        <div class="p-4 text-sm text-muted">
-          Headers serão configurados aqui.
-        </div>
-      </template>
+    <div class="grid min-h-0 flex-1 grid-rows-2">
+      <div class="min-h-0 overflow-auto">
+        <UTabs
+          :items="tabs"
+          class="h-full"
+        >
+          <template #headers>
+            <RequestHeadersEditor />
+          </template>
 
-      <template #body>
-        <div class="p-4 text-sm text-muted">
-          Body JSON será configurado aqui.
-        </div>
-      </template>
-    </UTabs>
+          <template #query>
+            <RequestQueryEditor />
+          </template>
+
+          <template #body>
+            <RequestBodyEditor />
+          </template>
+        </UTabs>
+      </div>
+
+      <ResponseViewer />
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { storeToRefs } from 'pinia'
+
+const requestStore = useRequestStore()
+const { request } = storeToRefs(requestStore)
+
+const tabs = [
+  {
+    label: 'Headers',
+    slot: 'headers',
+  },
+  {
+    label: 'Query',
+    slot: 'query',
+  },
+  {
+    label: 'Body',
+    slot: 'body',
+  },
+]
+</script>

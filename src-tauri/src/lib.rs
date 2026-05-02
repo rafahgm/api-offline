@@ -13,6 +13,7 @@ pub fn run() {
             commands::app_config::get_app_config,
             commands::app_config::save_last_workspace_path,
             commands::app_config::clear_last_workspace_path,
+            commands::http::execute_request
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
