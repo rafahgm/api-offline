@@ -12,7 +12,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
   const hasWorkspace = computed(() => currentWorkspace.value !== null)
 
   async function setCurrentWorkspace(workspace: Workspace) {
-    const colelctionStore = useCollectionStore()
+    const colelctionStore = useCollectionsStore()
     currentWorkspace.value = workspace
 
     await saveLastWorkspacePath(workspace.path)
@@ -74,7 +74,7 @@ export const useWorkspaceStore = defineStore('workspace', () => {
   }
 
   async function close() {
-    const colelctionStore = useCollectionStore()
+    const colelctionStore = useCollectionsStore()
 
     currentWorkspace.value = null
     error.value = null

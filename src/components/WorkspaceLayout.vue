@@ -75,7 +75,7 @@ import type { TreeItem } from '@nuxt/ui'
 import { computed } from 'vue'
 
 const workspaceStore = useWorkspaceStore()
-const collectionsStore = useCollectionStore()
+const collectionsStore = useCollectionsStore()
 
 const collectionsTree = computed<TreeItem[]>(() => collectionsStore.items.map(c => ({
   label: c.name,

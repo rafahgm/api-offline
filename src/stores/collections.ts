@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
-export const useCollectionStore = defineStore('collections', () => {
+export const useCollectionsStore = defineStore('collections', () => {
   const items = ref<Collection[]>([])
   const loading = ref(false)
   const error = ref<string | null>(null)
